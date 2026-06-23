@@ -104,15 +104,25 @@ class FundRequestController extends Controller
             abort(403, 'Status tidak diizinkan.');
         }
 
+        // Validasi: role hanya bisa ubah status jika pengajuan sudah di tahap mereka
+        $requiredCurrentStatus = match ($user->role) {
+            'kemahasiswaan' => ['Belum Diproses', 'Sedang Diproses Kemahasiswaan'],
+            'kaur_kemahasiswaan' => ['Sedang Diproses Kemahasiswaan'],
+            'keuangan' => ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan'],
+            'kaur_keuangan' => ['Sedang Diproses Keuangan'],
+            'wd2' => ['Menunggu Persetujuan WD2'],
+            default => [],
+        };
+
+        if (!in_array($pengajuan->status, $requiredCurrentStatus)) {
+            return back()->withErrors(['Pengajuan belum berada di tahap Anda.']);
+        }
+
         // Kaur Keuangan harus isi dana sebelum meneruskan ke WD2
         if ($user->role === 'kaur_keuangan' && $request->status === 'Menunggu Persetujuan WD2') {
             if (!$pengajuan->dana_disetujui_keuangan) {
                 return back()->withErrors(['Dana disetujui kaur keuangan harus diisi sebelum meneruskan ke WD2.']);
             }
-        }
-
-        if ($user->role === 'wd2' && $pengajuan->status !== 'Menunggu Persetujuan WD2') {
-            abort(403, 'WD2 hanya dapat mengubah status jika pengajuan sedang menunggu persetujuan.');
         }
 
         $pengajuan->update(['status' => $request->status]);

@@ -116,8 +116,19 @@
                 </span>
             </div>
 
-            @if(in_array(auth()->user()->role, ['kemahasiswaan', 'keuangan', 'kaur_kemahasiswaan', 'kaur_keuangan', 'wd2']))
-                @if(auth()->user()->role !== 'wd2' || $pengajuan->status === 'Menunggu Persetujuan WD2')
+            @php
+                $role = auth()->user()->role;
+                $canChangeStatus = match($role) {
+                    'kemahasiswaan' => in_array($pengajuan->status, ['Belum Diproses', 'Sedang Diproses Kemahasiswaan']),
+                    'kaur_kemahasiswaan' => in_array($pengajuan->status, ['Sedang Diproses Kemahasiswaan']),
+                    'keuangan' => in_array($pengajuan->status, ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan']),
+                    'kaur_keuangan' => in_array($pengajuan->status, ['Sedang Diproses Keuangan']),
+                    'wd2' => $pengajuan->status === 'Menunggu Persetujuan WD2',
+                    default => false,
+                };
+            @endphp
+
+            @if($canChangeStatus)
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/status" style="padding:10px 20px;">
                     @csrf
                     @method('PATCH')
@@ -125,23 +136,23 @@
                         <label>Ubah Status</label>
                         <select name="status" class="form-control" required>
                             <option value="">Pilih Status</option>
-                            @if(auth()->user()->role === 'kemahasiswaan')
+                            @if($role === 'kemahasiswaan')
                                 <option value="Sedang Diproses Kemahasiswaan">Sedang Diproses Kemahasiswaan</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
-                            @elseif(auth()->user()->role === 'kaur_kemahasiswaan')
+                            @elseif($role === 'kaur_kemahasiswaan')
                                 <option value="Diteruskan ke Keuangan">Diteruskan ke Keuangan</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
-                            @elseif(auth()->user()->role === 'keuangan')
+                            @elseif($role === 'keuangan')
                                 <option value="Sedang Diproses Keuangan">Sedang Diproses Keuangan</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
-                            @elseif(auth()->user()->role === 'kaur_keuangan')
+                            @elseif($role === 'kaur_keuangan')
                                 <option value="Menunggu Persetujuan WD2">Menunggu Persetujuan WD2</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
-                            @elseif(auth()->user()->role === 'wd2')
+                            @elseif($role === 'wd2')
                                 <option value="Disetujui">Disetujui</option>
                                 <option value="Ditolak">Ditolak</option>
                             @endif
@@ -149,7 +160,6 @@
                     </div>
                     <button type="submit" class="btn btn-success btn-sm">Simpan Status</button>
                 </form>
-                @endif
             @endif
         </div>
 
