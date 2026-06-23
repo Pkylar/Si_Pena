@@ -71,33 +71,38 @@ class ReportController extends Controller
         }
 
         $pengajuan = $query->latest()->get();
-        $filename = 'report_pengajuan_dana' . ($triwulan !== 'all' ? '_triwulan_' . $triwulan : '_semua') . '.csv';
+        $filename = 'report_pengajuan_dana' . ($triwulan !== 'all' ? '_triwulan_' . $triwulan : '_semua') . '.xls';
 
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
+        $html = '<table border="1" cellpadding="5" cellspacing="0">';
+        $html .= '<tr style="background:#1a3c34;color:#fff;font-weight:bold;">';
+        $html .= '<th>No</th><th>Pengaju</th><th>Nama Kegiatan</th><th>Jenis</th><th>Tanggal Mulai</th><th>Dana Diajukan</th><th>Dana Disetujui Kaur Keuangan</th><th>Dana Disetujui WD2</th><th>Status</th>';
+        $html .= '</tr>';
 
-        $callback = function () use ($pengajuan) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['No', 'Pengaju', 'Nama Kegiatan', 'Jenis', 'Tanggal Mulai', 'Dana Diajukan', 'Dana Disetujui Kaur Keuangan', 'Dana Disetujui WD2', 'Status']);
+        foreach ($pengajuan as $i => $p) {
+            $html .= '<tr>';
+            $html .= '<td>' . ($i + 1) . '</td>';
+            $html .= '<td>' . ($p->user->organization_name ?? $p->user->name) . '</td>';
+            $html .= '<td>' . $p->nama_kegiatan . '</td>';
+            $html .= '<td>' . $p->jenis_kegiatan . '</td>';
+            $html .= '<td>' . $p->tanggal_mulai . '</td>';
+            $html .= '<td>Rp ' . number_format($p->dana_diajukan, 0, ',', '.') . '</td>';
+            $html .= '<td>' . ($p->dana_disetujui_keuangan ? 'Rp ' . number_format($p->dana_disetujui_keuangan, 0, ',', '.') : '-') . '</td>';
+            $html .= '<td>Rp ' . number_format($p->dana_disetujui, 0, ',', '.') . '</td>';
+            $html .= '<td>' . $p->status . '</td>';
+            $html .= '</tr>';
+        }
 
-            foreach ($pengajuan as $i => $p) {
-                fputcsv($file, [
-                    $i + 1,
-                    $p->user->organization_name ?? $p->user->name,
-                    $p->nama_kegiatan,
-                    $p->jenis_kegiatan,
-                    $p->tanggal_mulai,
-                    $p->dana_diajukan,
-                    $p->dana_disetujui_keuangan ?? '-',
-                    $p->dana_disetujui,
-                    $p->status,
-                ]);
-            }
-            fclose($file);
-        };
+        $html .= '<tr style="font-weight:bold;background:#f0f0f0;">';
+        $html .= '<td colspan="5">TOTAL</td>';
+        $html .= '<td>Rp ' . number_format($pengajuan->sum('dana_diajukan'), 0, ',', '.') . '</td>';
+        $html .= '<td>Rp ' . number_format($pengajuan->sum('dana_disetujui_keuangan'), 0, ',', '.') . '</td>';
+        $html .= '<td>Rp ' . number_format($pengajuan->sum('dana_disetujui'), 0, ',', '.') . '</td>';
+        $html .= '<td></td>';
+        $html .= '</tr>';
+        $html .= '</table>';
 
-        return response()->stream($callback, 200, $headers);
+        return response($html)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }

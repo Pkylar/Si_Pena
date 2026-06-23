@@ -11,7 +11,7 @@
     @for($t = 1; $t <= 4; $t++)
         <a href="/report?triwulan={{ $t }}" class="btn {{ $triwulan == $t ? 'btn-primary' : '' }}" style="{{ $triwulan != $t ? 'background:#ddd;color:#333;' : '' }}">Triwulan {{ $t }}</a>
     @endfor
-    <a href="/report/export?triwulan={{ $triwulan }}" class="btn btn-success"><i class="fas fa-download"></i> Download CSV</a>
+    <a href="/report/export?triwulan={{ $triwulan }}" class="btn btn-success"><i class="fas fa-download"></i> Download Excel</a>
 </div>
 
 {{-- Summary per triwulan --}}
