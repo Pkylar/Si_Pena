@@ -107,9 +107,9 @@ class FundRequestController extends Controller
         // Validasi: role hanya bisa ubah status jika pengajuan sudah di tahap mereka
         $requiredCurrentStatus = match ($user->role) {
             'kemahasiswaan' => ['Belum Diproses', 'Sedang Diproses Kemahasiswaan'],
-            'kaur_kemahasiswaan' => ['Sedang Diproses Kemahasiswaan'],
+            'kaur_kemahasiswaan' => ['Diteruskan ke Kaur Kemahasiswaan'],
             'keuangan' => ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan'],
-            'kaur_keuangan' => ['Sedang Diproses Keuangan'],
+            'kaur_keuangan' => ['Diteruskan ke Kaur Keuangan'],
             'wd2' => ['Menunggu Persetujuan WD2'],
             default => [],
         };
@@ -153,11 +153,11 @@ class FundRequestController extends Controller
     private function getAllowedStatuses($role)
     {
         return match ($role) {
-            'kemahasiswaan' => ['Sedang Diproses Kemahasiswaan', 'Revisi', 'Ditolak'],
+            'kemahasiswaan' => ['Sedang Diproses Kemahasiswaan', 'Diteruskan ke Kaur Kemahasiswaan', 'Revisi', 'Ditolak'],
             'kaur_kemahasiswaan' => ['Diteruskan ke Keuangan', 'Revisi', 'Ditolak'],
-            'keuangan' => ['Sedang Diproses Keuangan', 'Revisi', 'Ditolak'],
+            'keuangan' => ['Sedang Diproses Keuangan', 'Diteruskan ke Kaur Keuangan', 'Revisi', 'Ditolak'],
             'kaur_keuangan' => ['Menunggu Persetujuan WD2', 'Revisi', 'Ditolak'],
-            'wd2' => ['Disetujui', 'Ditolak', 'Selesai'],
+            'wd2' => ['Disetujui', 'Ditolak'],
             default => [],
         };
     }

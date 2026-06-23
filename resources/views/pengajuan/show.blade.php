@@ -69,10 +69,7 @@
                 <span class="label">Dana Disetujui Kaur Keuangan</span>
                 <span class="value">{{ $pengajuan->dana_disetujui_keuangan ? 'Rp. ' . number_format($pengajuan->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</span>
             </div>
-            <div class="detail-row">
-                <span class="label">Dana Disetujui WD2</span>
-                <span class="value">{{ $pengajuan->dana_disetujui ? 'Rp. ' . number_format($pengajuan->dana_disetujui, 2, ',', '.') : '-' }}</span>
-            </div>
+
 
             @if(auth()->user()->role === 'kaur_keuangan')
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-keuangan" style="padding:10px 20px;">
@@ -86,17 +83,7 @@
                 </form>
             @endif
 
-            @if(auth()->user()->role === 'wd2')
-                <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund" style="padding:10px 20px;">
-                    @csrf
-                    @method('PATCH')
-                    <div class="form-group">
-                        <label>Dana Disetujui WD2 (Rp)</label>
-                        <input type="text" name="dana_disetujui" class="form-control input-rupiah" value="{{ $pengajuan->dana_disetujui ? number_format($pengajuan->dana_disetujui, 0, ',', '.') : '' }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-sm">Simpan Dana</button>
-                </form>
-            @endif
+
         </div>
 
         <div class="detail-section">
@@ -120,9 +107,9 @@
                 $role = auth()->user()->role;
                 $canChangeStatus = match($role) {
                     'kemahasiswaan' => in_array($pengajuan->status, ['Belum Diproses', 'Sedang Diproses Kemahasiswaan']),
-                    'kaur_kemahasiswaan' => in_array($pengajuan->status, ['Sedang Diproses Kemahasiswaan']),
+                    'kaur_kemahasiswaan' => in_array($pengajuan->status, ['Diteruskan ke Kaur Kemahasiswaan']),
                     'keuangan' => in_array($pengajuan->status, ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan']),
-                    'kaur_keuangan' => in_array($pengajuan->status, ['Sedang Diproses Keuangan']),
+                    'kaur_keuangan' => in_array($pengajuan->status, ['Diteruskan ke Kaur Keuangan']),
                     'wd2' => $pengajuan->status === 'Menunggu Persetujuan WD2',
                     default => false,
                 };
@@ -138,6 +125,7 @@
                             <option value="">Pilih Status</option>
                             @if($role === 'kemahasiswaan')
                                 <option value="Sedang Diproses Kemahasiswaan">Sedang Diproses Kemahasiswaan</option>
+                                <option value="Diteruskan ke Kaur Kemahasiswaan">Diteruskan ke Kaur Kemahasiswaan</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
                             @elseif($role === 'kaur_kemahasiswaan')
@@ -146,6 +134,7 @@
                                 <option value="Ditolak">Ditolak</option>
                             @elseif($role === 'keuangan')
                                 <option value="Sedang Diproses Keuangan">Sedang Diproses Keuangan</option>
+                                <option value="Diteruskan ke Kaur Keuangan">Diteruskan ke Kaur Keuangan</option>
                                 <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
                             @elseif($role === 'kaur_keuangan')

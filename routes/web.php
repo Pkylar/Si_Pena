@@ -27,8 +27,6 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan')->name('pengajuan.revision');
     Route::patch('/pengajuan/{id}/status', [FundRequestController::class, 'updateStatus'])
         ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan,wd2')->name('pengajuan.status');
-    Route::patch('/pengajuan/{id}/approved-fund', [FundRequestController::class, 'updateApprovedFund'])
-        ->middleware('role:wd2')->name('pengajuan.approved-fund');
     Route::patch('/pengajuan/{id}/approved-fund-keuangan', [FundRequestController::class, 'updateApprovedFundKeuangan'])
         ->middleware('role:kaur_keuangan')->name('pengajuan.approved-fund-keuangan');
 

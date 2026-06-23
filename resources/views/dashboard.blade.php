@@ -52,6 +52,13 @@ setInterval(updateGreeting, 60000);
             <p>Pengajuan Ditolak</p>
         </div>
     </div>
+    <div class="stat-card">
+        <div class="stat-icon accepted"><i class="fas fa-wallet"></i></div>
+        <div class="stat-info">
+            <h3>Rp. {{ number_format($stats['total_dana_acc'], 0, ',', '.') }}</h3>
+            <p>Total Dana ACC Kaur Keuangan</p>
+        </div>
+    </div>
 </div>
 
 <div class="card">

@@ -19,11 +19,13 @@ class DashboardController extends Controller
         $stats = [
             'belum_diproses' => (clone $query)->where('status', 'Belum Diproses')->count(),
             'diproses' => (clone $query)->whereIn('status', [
-                'Sedang Diproses Kemahasiswaan', 'Sedang Diproses Keuangan',
-                'Diteruskan ke Keuangan', 'Menunggu Persetujuan WD2'
+                'Sedang Diproses Kemahasiswaan', 'Diteruskan ke Kaur Kemahasiswaan',
+                'Diteruskan ke Keuangan', 'Sedang Diproses Keuangan',
+                'Diteruskan ke Kaur Keuangan', 'Menunggu Persetujuan WD2'
             ])->count(),
             'diterima' => (clone $query)->whereIn('status', ['Disetujui', 'Selesai'])->count(),
             'ditolak' => (clone $query)->where('status', 'Ditolak')->count(),
+            'total_dana_acc' => (clone $query)->whereIn('status', ['Disetujui', 'Selesai'])->sum('dana_disetujui_keuangan'),
         ];
 
         $pengajuan = $query->with('user')->latest()->get();
