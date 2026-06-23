@@ -66,10 +66,6 @@
             <h4><i class="fas fa-money-bill-wave"></i> Dana</h4>
             <div class="detail-row"><span class="label">Dana yang Diajukan</span><span class="value">Rp. {{ number_format($pengajuan->dana_diajukan, 2, ',', '.') }}</span></div>
             <div class="detail-row">
-                <span class="label">Dana Disetujui Kaur Kemahasiswaan</span>
-                <span class="value">{{ $pengajuan->dana_disetujui_kemahasiswaan ? 'Rp. ' . number_format($pengajuan->dana_disetujui_kemahasiswaan, 2, ',', '.') : '-' }}</span>
-            </div>
-            <div class="detail-row">
                 <span class="label">Dana Disetujui Kaur Keuangan</span>
                 <span class="value">{{ $pengajuan->dana_disetujui_keuangan ? 'Rp. ' . number_format($pengajuan->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</span>
             </div>
@@ -77,18 +73,6 @@
                 <span class="label">Dana Disetujui WD2</span>
                 <span class="value">{{ $pengajuan->dana_disetujui ? 'Rp. ' . number_format($pengajuan->dana_disetujui, 2, ',', '.') : '-' }}</span>
             </div>
-
-            @if(auth()->user()->role === 'kaur_kemahasiswaan')
-                <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-kemahasiswaan" style="padding:10px 20px;">
-                    @csrf
-                    @method('PATCH')
-                    <div class="form-group">
-                        <label>Dana Disetujui Kaur Kemahasiswaan (Rp)</label>
-                        <input type="text" name="dana_disetujui_kemahasiswaan" class="form-control input-rupiah" value="{{ $pengajuan->dana_disetujui_kemahasiswaan ? number_format($pengajuan->dana_disetujui_kemahasiswaan, 0, ',', '.') : '' }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-sm">Simpan Dana</button>
-                </form>
-            @endif
 
             @if(auth()->user()->role === 'kaur_keuangan')
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-keuangan" style="padding:10px 20px;">
