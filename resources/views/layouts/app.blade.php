@@ -21,9 +21,11 @@
             <a href="/grafik/ormawa" class="{{ request()->is('grafik*') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i> Grafik Pengajuan Dana
             </a>
+            @if(!in_array(auth()->user()->role, ['mahasiswa', 'ormawa']))
             <a href="/report" class="{{ request()->is('report*') ? 'active' : '' }}">
                 <i class="fas fa-file-alt"></i> Report
             </a>
+            @endif
         </div>
         <div class="navbar-right">
             <span class="user-badge">

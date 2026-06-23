@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/budget/{id}', [GrafikController::class, 'updateBudget'])
         ->middleware('role:wd2')->name('budget.update');
 
-    Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])->name('report.index');
-    Route::get('/report/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('report.export');
+    Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])
+        ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan,wd2')->name('report.index');
+    Route::get('/report/export', [\App\Http\Controllers\ReportController::class, 'export'])
+        ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan,wd2')->name('report.export');
 });

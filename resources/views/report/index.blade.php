@@ -23,7 +23,6 @@
                 <tr>
                     <th>Triwulan</th>
                     <th>Jumlah Pengajuan</th>
-                    <th>Total Dana Diajukan</th>
                     <th>Total Dana Disetujui</th>
                 </tr>
             </thead>
@@ -32,14 +31,12 @@
                 <tr>
                     <td>Triwulan {{ $t }}</td>
                     <td>{{ $s['jumlah'] }}</td>
-                    <td>Rp. {{ number_format($s['total_diajukan'], 0, ',', '.') }}</td>
                     <td>Rp. {{ number_format($s['total_disetujui'], 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
                 <tr style="font-weight:bold;border-top:2px solid #333;">
                     <td>Total</td>
                     <td>{{ collect($summaryPerTriwulan)->sum('jumlah') }}</td>
-                    <td>Rp. {{ number_format(collect($summaryPerTriwulan)->sum('total_diajukan'), 0, ',', '.') }}</td>
                     <td>Rp. {{ number_format(collect($summaryPerTriwulan)->sum('total_disetujui'), 0, ',', '.') }}</td>
                 </tr>
             </tbody>
@@ -64,7 +61,6 @@
                         <th>Pengaju</th>
                         <th>Nama Kegiatan</th>
                         <th>Jenis</th>
-                        <th>Dana Diajukan</th>
                         <th>Dana yang Disetujui</th>
                         <th>Status</th>
                     </tr>
@@ -76,7 +72,6 @@
                         <td>{{ $p->user->organization_name ?? $p->user->name }}</td>
                         <td>{{ $p->nama_kegiatan }}</td>
                         <td>{{ $p->jenis_kegiatan }}</td>
-                        <td>Rp. {{ number_format($p->dana_diajukan, 0, ',', '.') }}</td>
                         <td>Rp. {{ number_format($p->dana_disetujui_keuangan ?? $p->dana_disetujui, 0, ',', '.') }}</td>
                         <td><span class="badge badge-success">{{ $p->status }}</span></td>
                     </tr>
@@ -84,7 +79,6 @@
                 </tbody>
             </table>
             <div style="margin-top:15px;padding:15px;background:#f8f9fa;border-radius:8px;">
-                <strong>Total Dana Diajukan:</strong> Rp. {{ number_format($totalDiajukan, 0, ',', '.') }} |
                 <strong>Total Dana Disetujui:</strong> Rp. {{ number_format($totalDisetujui, 0, ',', '.') }}
             </div>
         @endif
