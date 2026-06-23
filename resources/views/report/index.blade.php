@@ -65,8 +65,7 @@
                         <th>Nama Kegiatan</th>
                         <th>Jenis</th>
                         <th>Dana Diajukan</th>
-                        <th>Dana Disetujui Kaur Keuangan</th>
-                        <th>Dana Disetujui WD2</th>
+                        <th>Dana yang Disetujui</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -79,7 +78,6 @@
                         <td>{{ $p->jenis_kegiatan }}</td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 0, ',', '.') }}</td>
                         <td>{{ $p->dana_disetujui_keuangan ? 'Rp. ' . number_format($p->dana_disetujui_keuangan, 0, ',', '.') : '-' }}</td>
-                        <td>Rp. {{ number_format($p->dana_disetujui, 0, ',', '.') }}</td>
                         <td><span class="badge badge-success">{{ $p->status }}</span></td>
                     </tr>
                     @endforeach

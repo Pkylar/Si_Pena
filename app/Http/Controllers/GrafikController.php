@@ -15,7 +15,7 @@ class GrafikController extends Controller
 
         $approvedRequests = FundRequest::where('jenis_kegiatan', 'Organisasi Kemahasiswaan')
             ->whereIn('status', ['Disetujui', 'Selesai'])
-            ->whereNotNull('dana_disetujui')
+            ->whereNotNull('dana_disetujui_keuangan')
             ->whereHas('user', fn($q) => $q->whereNotNull('organization_name')->where('organization_name', '!=', ''))
             ->with('user')
             ->get();
@@ -26,12 +26,12 @@ class GrafikController extends Controller
             for ($t = 1; $t <= 4; $t++) {
                 $chartData[$unit][$t] = $approvedRequests
                     ->filter(fn($r) => $r->user->organization_name === $unit && $this->getTriwulan($r->tanggal_mulai) === $t)
-                    ->sum('dana_disetujui');
+                    ->sum('dana_disetujui_keuangan');
             }
         }
 
         $totalDana = $budgets->where('triwulan', 4)->sum('total_dana');
-        $sisaDana = $totalDana - $approvedRequests->sum('dana_disetujui');
+        $sisaDana = $totalDana - $approvedRequests->sum('dana_disetujui_keuangan');
 
         return view('grafik.ormawa', compact('chartData', 'units', 'totalDana', 'sisaDana', 'budgets'));
     }
@@ -43,7 +43,7 @@ class GrafikController extends Controller
 
         $approvedRequests = FundRequest::where('jenis_kegiatan', 'Lomba')
             ->whereIn('status', ['Disetujui', 'Selesai'])
-            ->whereNotNull('dana_disetujui')
+            ->whereNotNull('dana_disetujui_keuangan')
             ->with('user')
             ->get();
 
@@ -60,7 +60,7 @@ class GrafikController extends Controller
             for ($t = 1; $t <= 4; $t++) {
                 $chartData[$unit][$t] = $approvedRequests
                     ->filter(fn($r) => ($orgToUnit[$r->user->organization_name] ?? '') === $unit && $this->getTriwulan($r->tanggal_mulai) === $t)
-                    ->sum('dana_disetujui');
+                    ->sum('dana_disetujui_keuangan');
             }
         }
 
@@ -69,7 +69,7 @@ class GrafikController extends Controller
             $b = $budgets->where('nama_unit', $unit)->where('triwulan', 4)->first();
             $totalDisetujuiUnit = $approvedRequests
                 ->filter(fn($r) => ($orgToUnit[$r->user->organization_name] ?? '') === $unit)
-                ->sum('dana_disetujui');
+                ->sum('dana_disetujui_keuangan');
             $budgetsByUnit[$unit] = [
                 'total' => $b ? $b->total_dana : 0,
                 'sisa' => $b ? $b->total_dana - $totalDisetujuiUnit : 0,

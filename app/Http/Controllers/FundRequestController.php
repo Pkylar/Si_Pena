@@ -127,6 +127,11 @@ class FundRequestController extends Controller
 
         $pengajuan->update(['status' => $request->status]);
 
+        // Ketika WD2 approve, set dana_disetujui = dana_disetujui_keuangan
+        if ($user->role === 'wd2' && $request->status === 'Disetujui') {
+            $pengajuan->update(['dana_disetujui' => $pengajuan->dana_disetujui_keuangan]);
+        }
+
         return back()->with('success', 'Status berhasil diperbarui.');
     }
 

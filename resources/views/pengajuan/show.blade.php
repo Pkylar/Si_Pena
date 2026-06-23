@@ -66,7 +66,7 @@
             <h4><i class="fas fa-money-bill-wave"></i> Dana</h4>
             <div class="detail-row"><span class="label">Dana yang Diajukan</span><span class="value">Rp. {{ number_format($pengajuan->dana_diajukan, 2, ',', '.') }}</span></div>
             <div class="detail-row">
-                <span class="label">Dana Disetujui Kaur Keuangan</span>
+                <span class="label">Dana yang Disetujui</span>
                 <span class="value">{{ $pengajuan->dana_disetujui_keuangan ? 'Rp. ' . number_format($pengajuan->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</span>
             </div>
 
