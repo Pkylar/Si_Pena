@@ -42,7 +42,7 @@
                             </a>
                         </td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 2, ',', '.') }}</td>
-                        <td>{{ $p->dana_disetujui_keuangan ? 'Rp. ' . number_format($p->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</td>
+                        <td>{{ ($p->dana_disetujui_keuangan ?? $p->dana_disetujui) ? 'Rp. ' . number_format($p->dana_disetujui_keuangan ?? $p->dana_disetujui, 2, ',', '.') : '-' }}</td>
                         <td>{{ $p->created_at->format('d/m/Y') }}</td>
                         <td>
                             @php

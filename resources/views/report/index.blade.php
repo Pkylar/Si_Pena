@@ -77,7 +77,7 @@
                         <td>{{ $p->nama_kegiatan }}</td>
                         <td>{{ $p->jenis_kegiatan }}</td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 0, ',', '.') }}</td>
-                        <td>{{ $p->dana_disetujui_keuangan ? 'Rp. ' . number_format($p->dana_disetujui_keuangan, 0, ',', '.') : '-' }}</td>
+                        <td>Rp. {{ number_format($p->dana_disetujui_keuangan ?? $p->dana_disetujui, 0, ',', '.') }}</td>
                         <td><span class="badge badge-success">{{ $p->status }}</span></td>
                     </tr>
                     @endforeach

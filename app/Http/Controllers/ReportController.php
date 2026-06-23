@@ -12,7 +12,7 @@ class ReportController extends Controller
         $triwulan = $request->get('triwulan', 'all');
 
         $query = FundRequest::whereIn('status', ['Disetujui', 'Selesai'])
-            ->whereNotNull('dana_disetujui_keuangan')
+            ->where(fn($q) => $q->whereNotNull('dana_disetujui_keuangan')->orWhereNotNull('dana_disetujui'))
             ->with('user');
 
         if ($triwulan !== 'all') {
@@ -28,7 +28,7 @@ class ReportController extends Controller
         $pengajuan = $query->latest()->get();
 
         $totalDiajukan = $pengajuan->sum('dana_diajukan');
-        $totalDisetujui = $pengajuan->sum('dana_disetujui_keuangan');
+        $totalDisetujui = $pengajuan->sum(fn($r) => $r->dana_disetujui_keuangan ?? $r->dana_disetujui);
 
         $summaryPerTriwulan = [];
         for ($t = 1; $t <= 4; $t++) {
@@ -39,13 +39,13 @@ class ReportController extends Controller
                 4 => [10, 11, 12],
             };
             $items = FundRequest::whereIn('status', ['Disetujui', 'Selesai'])
-                ->whereNotNull('dana_disetujui_keuangan')
+                ->where(fn($q) => $q->whereNotNull('dana_disetujui_keuangan')->orWhereNotNull('dana_disetujui'))
                 ->whereRaw('MONTH(tanggal_mulai) IN (' . implode(',', $months) . ')')
                 ->get();
             $summaryPerTriwulan[$t] = [
                 'jumlah' => $items->count(),
                 'total_diajukan' => $items->sum('dana_diajukan'),
-                'total_disetujui' => $items->sum('dana_disetujui_keuangan'),
+                'total_disetujui' => $items->sum(fn($r) => $r->dana_disetujui_keuangan ?? $r->dana_disetujui),
             ];
         }
 
@@ -57,7 +57,7 @@ class ReportController extends Controller
         $triwulan = $request->get('triwulan', 'all');
 
         $query = FundRequest::whereIn('status', ['Disetujui', 'Selesai'])
-            ->whereNotNull('dana_disetujui_keuangan')
+            ->where(fn($q) => $q->whereNotNull('dana_disetujui_keuangan')->orWhereNotNull('dana_disetujui'))
             ->with('user');
 
         if ($triwulan !== 'all') {
@@ -86,7 +86,7 @@ class ReportController extends Controller
             $html .= '<td>' . $p->jenis_kegiatan . '</td>';
             $html .= '<td>' . $p->tanggal_mulai . '</td>';
             $html .= '<td>Rp ' . number_format($p->dana_diajukan, 0, ',', '.') . '</td>';
-            $html .= '<td>' . ($p->dana_disetujui_keuangan ? 'Rp ' . number_format($p->dana_disetujui_keuangan, 0, ',', '.') : '-') . '</td>';
+            $html .= '<td>Rp ' . number_format($p->dana_disetujui_keuangan ?? $p->dana_disetujui, 0, ',', '.') . '</td>';
             $html .= '<td>' . $p->status . '</td>';
             $html .= '</tr>';
         }
@@ -94,7 +94,7 @@ class ReportController extends Controller
         $html .= '<tr style="font-weight:bold;background:#f0f0f0;">';
         $html .= '<td colspan="5">TOTAL</td>';
         $html .= '<td>Rp ' . number_format($pengajuan->sum('dana_diajukan'), 0, ',', '.') . '</td>';
-        $html .= '<td>Rp ' . number_format($pengajuan->sum('dana_disetujui_keuangan'), 0, ',', '.') . '</td>';
+        $html .= '<td>Rp ' . number_format($pengajuan->sum(fn($r) => $r->dana_disetujui_keuangan ?? $r->dana_disetujui), 0, ',', '.') . '</td>';
         $html .= '<td></td>';
         $html .= '</tr>';
         $html .= '</table>';
