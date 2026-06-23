@@ -24,15 +24,15 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:mahasiswa,ormawa')->name('pengajuan.store');
     Route::get('/pengajuan/{id}', [FundRequestController::class, 'show'])->name('pengajuan.show');
     Route::post('/pengajuan/{id}/revision', [FundRequestController::class, 'addRevision'])
-        ->middleware('role:kemahasiswaan,keuangan')->name('pengajuan.revision');
+        ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan')->name('pengajuan.revision');
     Route::patch('/pengajuan/{id}/status', [FundRequestController::class, 'updateStatus'])
-        ->middleware('role:kemahasiswaan,keuangan,wd2')->name('pengajuan.status');
+        ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan,wd2')->name('pengajuan.status');
     Route::patch('/pengajuan/{id}/approved-fund', [FundRequestController::class, 'updateApprovedFund'])
         ->middleware('role:wd2')->name('pengajuan.approved-fund');
     Route::patch('/pengajuan/{id}/approved-fund-kemahasiswaan', [FundRequestController::class, 'updateApprovedFundKemahasiswaan'])
-        ->middleware('role:kemahasiswaan')->name('pengajuan.approved-fund-kemahasiswaan');
+        ->middleware('role:kaur_kemahasiswaan')->name('pengajuan.approved-fund-kemahasiswaan');
     Route::patch('/pengajuan/{id}/approved-fund-keuangan', [FundRequestController::class, 'updateApprovedFundKeuangan'])
-        ->middleware('role:keuangan')->name('pengajuan.approved-fund-keuangan');
+        ->middleware('role:kaur_keuangan')->name('pengajuan.approved-fund-keuangan');
 
     Route::get('/grafik/ormawa', [GrafikController::class, 'ormawa'])->name('grafik.ormawa');
     Route::get('/grafik/lomba', [GrafikController::class, 'lomba'])->name('grafik.lomba');

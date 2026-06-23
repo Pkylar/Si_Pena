@@ -30,9 +30,11 @@
                 @php
                     $u = auth()->user();
                     $badges = [
-                        'keuangan' => 'Kaur Keuangan / KeuanganFRI',
+                        'keuangan' => 'Keu / Keuangan FRI',
+                        'kaur_keuangan' => 'Kaur Keuangan / Kaur Keuangan FRI',
                         'ormawa' => ($u->organization_name ?? 'Ormawa') . ' / Ormawa ' . ($u->organization_name ?? ''),
-                        'kemahasiswaan' => 'Kaur Kemahasiswaan / Kemahasiswaan',
+                        'kemahasiswaan' => 'Kem / Kemahasiswaan FRI',
+                        'kaur_kemahasiswaan' => 'Kaur Kemahasiswaan / Kaur Kemahasiswaan FRI',
                         'wd2' => 'WD2 / Wakil Dekan 2',
                         'mahasiswa' => $u->name . ' / Mahasiswa',
                     ];

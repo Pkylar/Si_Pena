@@ -94,8 +94,9 @@ class FundRequestController extends Controller
         $pengajuan = FundRequest::findOrFail($id);
         $user = auth()->user();
 
-        if (!in_array($user->role, ['kemahasiswaan', 'keuangan', 'wd2'])) {
-            abort(403, 'Anda tidak memiliki akses untuk mengubah status.');
+        $allowedRoles = ['kemahasiswaan', 'keuangan', 'kaur_kemahasiswaan', 'kaur_keuangan', 'wd2'];
+        if (!in_array($user->role, $allowedRoles)) {
+            abort(403);
         }
 
         $allowedStatuses = $this->getAllowedStatuses($user->role);
@@ -103,17 +104,17 @@ class FundRequestController extends Controller
             abort(403, 'Status tidak diizinkan.');
         }
 
-        // Kemahasiswaan harus isi dana disetujui sebelum meneruskan ke keuangan
-        if ($user->role === 'kemahasiswaan' && $request->status === 'Diteruskan ke Keuangan') {
+        // Kaur Kemahasiswaan harus isi dana sebelum meneruskan ke keuangan
+        if ($user->role === 'kaur_kemahasiswaan' && $request->status === 'Diteruskan ke Keuangan') {
             if (!$pengajuan->dana_disetujui_kemahasiswaan) {
-                return back()->withErrors(['Dana disetujui kemahasiswaan harus diisi sebelum meneruskan ke keuangan.']);
+                return back()->withErrors(['Dana disetujui kaur kemahasiswaan harus diisi sebelum meneruskan ke keuangan.']);
             }
         }
 
-        // Keuangan harus isi dana disetujui sebelum meneruskan ke WD2
-        if ($user->role === 'keuangan' && $request->status === 'Menunggu Persetujuan WD2') {
+        // Kaur Keuangan harus isi dana sebelum meneruskan ke WD2
+        if ($user->role === 'kaur_keuangan' && $request->status === 'Menunggu Persetujuan WD2') {
             if (!$pengajuan->dana_disetujui_keuangan) {
-                return back()->withErrors(['Dana disetujui keuangan harus diisi sebelum meneruskan ke WD2.']);
+                return back()->withErrors(['Dana disetujui kaur keuangan harus diisi sebelum meneruskan ke WD2.']);
             }
         }
 
@@ -143,7 +144,7 @@ class FundRequestController extends Controller
         $pengajuan = FundRequest::findOrFail($id);
         $pengajuan->update(['dana_disetujui_kemahasiswaan' => $request->dana_disetujui_kemahasiswaan]);
 
-        return back()->with('success', 'Dana disetujui kemahasiswaan berhasil disimpan.');
+        return back()->with('success', 'Dana disetujui kaur kemahasiswaan berhasil disimpan.');
     }
 
     public function updateApprovedFundKeuangan(Request $request, $id)
@@ -153,14 +154,16 @@ class FundRequestController extends Controller
         $pengajuan = FundRequest::findOrFail($id);
         $pengajuan->update(['dana_disetujui_keuangan' => $request->dana_disetujui_keuangan]);
 
-        return back()->with('success', 'Dana disetujui keuangan berhasil disimpan.');
+        return back()->with('success', 'Dana disetujui kaur keuangan berhasil disimpan.');
     }
 
     private function getAllowedStatuses($role)
     {
         return match ($role) {
-            'kemahasiswaan' => ['Sedang Diproses Kemahasiswaan', 'Revisi', 'Diteruskan ke Keuangan', 'Ditolak'],
-            'keuangan' => ['Sedang Diproses Keuangan', 'Revisi', 'Menunggu Persetujuan WD2', 'Ditolak'],
+            'kemahasiswaan' => ['Sedang Diproses Kemahasiswaan', 'Revisi', 'Ditolak'],
+            'kaur_kemahasiswaan' => ['Diteruskan ke Keuangan', 'Revisi', 'Ditolak'],
+            'keuangan' => ['Sedang Diproses Keuangan', 'Revisi', 'Ditolak'],
+            'kaur_keuangan' => ['Menunggu Persetujuan WD2', 'Revisi', 'Ditolak'],
             'wd2' => ['Disetujui', 'Ditolak', 'Selesai'],
             default => [],
         };

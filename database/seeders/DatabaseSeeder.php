@@ -33,6 +33,20 @@ class DatabaseSeeder extends Seeder
             'role' => 'wd2',
         ]);
 
+        User::create([
+            'name' => 'Kaur Kemahasiswaan FRI',
+            'username' => 'kaurKemahasiswaanFRI',
+            'password' => 'kaurkemahasiswaan123',
+            'role' => 'kaur_kemahasiswaan',
+        ]);
+
+        User::create([
+            'name' => 'Kaur Keuangan FRI',
+            'username' => 'kaurKeuanganFRI',
+            'password' => 'kaurkeuangan123',
+            'role' => 'kaur_keuangan',
+        ]);
+
         $hmti = User::create([
             'name' => 'HMTI',
             'username' => 'HMTI',

@@ -43,14 +43,14 @@
                 <div style="padding:10px 20px;">
                     @foreach($pengajuan->revisions as $rev)
                         <div class="revision-item">
-                            <div class="revision-meta">{{ $rev->user->name }} ({{ ucfirst($rev->user->role) }}) - {{ $rev->created_at->format('d/m/Y H:i') }}</div>
+                            <div class="revision-meta">{{ $rev->user->name }} ({{ ucfirst(str_replace('_', ' ', $rev->user->role)) }}) - {{ $rev->created_at->format('d/m/Y H:i') }}</div>
                             <div class="revision-text">{{ $rev->catatan }}</div>
                         </div>
                     @endforeach
                 </div>
             @endif
 
-            @if(in_array(auth()->user()->role, ['kemahasiswaan', 'keuangan']))
+            @if(in_array(auth()->user()->role, ['kemahasiswaan', 'keuangan', 'kaur_kemahasiswaan', 'kaur_keuangan']))
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/revision" style="padding:10px 20px;">
                     @csrf
                     <div class="form-group">
@@ -78,7 +78,7 @@
                 <span class="value">{{ $pengajuan->dana_disetujui ? 'Rp. ' . number_format($pengajuan->dana_disetujui, 2, ',', '.') : '-' }}</span>
             </div>
 
-            @if(auth()->user()->role === 'kemahasiswaan')
+            @if(auth()->user()->role === 'kaur_kemahasiswaan')
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-kemahasiswaan" style="padding:10px 20px;">
                     @csrf
                     @method('PATCH')
@@ -90,7 +90,7 @@
                 </form>
             @endif
 
-            @if(auth()->user()->role === 'keuangan')
+            @if(auth()->user()->role === 'kaur_keuangan')
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-keuangan" style="padding:10px 20px;">
                     @csrf
                     @method('PATCH')
@@ -132,7 +132,7 @@
                 </span>
             </div>
 
-            @if(in_array(auth()->user()->role, ['kemahasiswaan', 'keuangan', 'wd2']))
+            @if(in_array(auth()->user()->role, ['kemahasiswaan', 'keuangan', 'kaur_kemahasiswaan', 'kaur_keuangan', 'wd2']))
                 @if(auth()->user()->role !== 'wd2' || $pengajuan->status === 'Menunggu Persetujuan WD2')
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/status" style="padding:10px 20px;">
                     @csrf
@@ -144,12 +144,18 @@
                             @if(auth()->user()->role === 'kemahasiswaan')
                                 <option value="Sedang Diproses Kemahasiswaan">Sedang Diproses Kemahasiswaan</option>
                                 <option value="Revisi">Revisi</option>
+                                <option value="Ditolak">Ditolak</option>
+                            @elseif(auth()->user()->role === 'kaur_kemahasiswaan')
                                 <option value="Diteruskan ke Keuangan">Diteruskan ke Keuangan</option>
+                                <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
                             @elseif(auth()->user()->role === 'keuangan')
                                 <option value="Sedang Diproses Keuangan">Sedang Diproses Keuangan</option>
                                 <option value="Revisi">Revisi</option>
+                                <option value="Ditolak">Ditolak</option>
+                            @elseif(auth()->user()->role === 'kaur_keuangan')
                                 <option value="Menunggu Persetujuan WD2">Menunggu Persetujuan WD2</option>
+                                <option value="Revisi">Revisi</option>
                                 <option value="Ditolak">Ditolak</option>
                             @elseif(auth()->user()->role === 'wd2')
                                 <option value="Disetujui">Disetujui</option>
