@@ -38,4 +38,5 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:wd2')->name('budget.update');
 
     Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])->name('report.index');
+    Route::get('/report/export', [\App\Http\Controllers\ReportController::class, 'export'])->name('report.export');
 });
