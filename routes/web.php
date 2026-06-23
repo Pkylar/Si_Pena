@@ -29,9 +29,15 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:kemahasiswaan,keuangan,wd2')->name('pengajuan.status');
     Route::patch('/pengajuan/{id}/approved-fund', [FundRequestController::class, 'updateApprovedFund'])
         ->middleware('role:wd2')->name('pengajuan.approved-fund');
+    Route::patch('/pengajuan/{id}/approved-fund-kemahasiswaan', [FundRequestController::class, 'updateApprovedFundKemahasiswaan'])
+        ->middleware('role:kemahasiswaan')->name('pengajuan.approved-fund-kemahasiswaan');
+    Route::patch('/pengajuan/{id}/approved-fund-keuangan', [FundRequestController::class, 'updateApprovedFundKeuangan'])
+        ->middleware('role:keuangan')->name('pengajuan.approved-fund-keuangan');
 
     Route::get('/grafik/ormawa', [GrafikController::class, 'ormawa'])->name('grafik.ormawa');
     Route::get('/grafik/lomba', [GrafikController::class, 'lomba'])->name('grafik.lomba');
     Route::patch('/budget/{id}', [GrafikController::class, 'updateBudget'])
         ->middleware('role:wd2')->name('budget.update');
+
+    Route::get('/report', [\App\Http\Controllers\ReportController::class, 'index'])->name('report.index');
 });

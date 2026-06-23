@@ -103,6 +103,20 @@ class FundRequestController extends Controller
             abort(403, 'Status tidak diizinkan.');
         }
 
+        // Kemahasiswaan harus isi dana disetujui sebelum meneruskan ke keuangan
+        if ($user->role === 'kemahasiswaan' && $request->status === 'Diteruskan ke Keuangan') {
+            if (!$pengajuan->dana_disetujui_kemahasiswaan) {
+                return back()->withErrors(['Dana disetujui kemahasiswaan harus diisi sebelum meneruskan ke keuangan.']);
+            }
+        }
+
+        // Keuangan harus isi dana disetujui sebelum meneruskan ke WD2
+        if ($user->role === 'keuangan' && $request->status === 'Menunggu Persetujuan WD2') {
+            if (!$pengajuan->dana_disetujui_keuangan) {
+                return back()->withErrors(['Dana disetujui keuangan harus diisi sebelum meneruskan ke WD2.']);
+            }
+        }
+
         if ($user->role === 'wd2' && $pengajuan->status !== 'Menunggu Persetujuan WD2') {
             abort(403, 'WD2 hanya dapat mengubah status jika pengajuan sedang menunggu persetujuan.');
         }
@@ -120,6 +134,26 @@ class FundRequestController extends Controller
         $pengajuan->update(['dana_disetujui' => $request->dana_disetujui]);
 
         return back()->with('success', 'Dana disetujui berhasil diperbarui.');
+    }
+
+    public function updateApprovedFundKemahasiswaan(Request $request, $id)
+    {
+        $request->merge(['dana_disetujui_kemahasiswaan' => str_replace('.', '', $request->dana_disetujui_kemahasiswaan)]);
+        $request->validate(['dana_disetujui_kemahasiswaan' => 'required|numeric|min:0']);
+        $pengajuan = FundRequest::findOrFail($id);
+        $pengajuan->update(['dana_disetujui_kemahasiswaan' => $request->dana_disetujui_kemahasiswaan]);
+
+        return back()->with('success', 'Dana disetujui kemahasiswaan berhasil disimpan.');
+    }
+
+    public function updateApprovedFundKeuangan(Request $request, $id)
+    {
+        $request->merge(['dana_disetujui_keuangan' => str_replace('.', '', $request->dana_disetujui_keuangan)]);
+        $request->validate(['dana_disetujui_keuangan' => 'required|numeric|min:0']);
+        $pengajuan = FundRequest::findOrFail($id);
+        $pengajuan->update(['dana_disetujui_keuangan' => $request->dana_disetujui_keuangan]);
+
+        return back()->with('success', 'Dana disetujui keuangan berhasil disimpan.');
     }
 
     private function getAllowedStatuses($role)

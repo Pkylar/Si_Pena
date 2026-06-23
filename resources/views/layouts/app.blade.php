@@ -21,15 +21,18 @@
             <a href="/grafik/ormawa" class="{{ request()->is('grafik*') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i> Grafik Pengajuan Dana
             </a>
+            <a href="/report" class="{{ request()->is('report*') ? 'active' : '' }}">
+                <i class="fas fa-file-alt"></i> Report
+            </a>
         </div>
         <div class="navbar-right">
             <span class="user-badge">
                 @php
                     $u = auth()->user();
                     $badges = [
-                        'keuangan' => 'Keu / KeuanganFRI',
+                        'keuangan' => 'Kaur Keuangan / KeuanganFRI',
                         'ormawa' => ($u->organization_name ?? 'Ormawa') . ' / Ormawa ' . ($u->organization_name ?? ''),
-                        'kemahasiswaan' => 'Kem / Kemahasiswaan',
+                        'kemahasiswaan' => 'Kaur Kemahasiswaan / Kemahasiswaan',
                         'wd2' => 'WD2 / Wakil Dekan 2',
                         'mahasiswa' => $u->name . ' / Mahasiswa',
                     ];
