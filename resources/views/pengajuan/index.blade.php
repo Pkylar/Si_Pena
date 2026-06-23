@@ -26,6 +26,7 @@
                         <th>Diajukan Oleh</th>
                         <th>Proposal Pengajuan</th>
                         <th>Dana yang Diajukan</th>
+                        <th>Dana yang Disetujui</th>
                         <th>Tanggal Pengajuan</th>
                         <th>Status</th>
                         <th>Aksi</th>
@@ -41,6 +42,7 @@
                             </a>
                         </td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 2, ',', '.') }}</td>
+                        <td>{{ $p->dana_disetujui_keuangan ? 'Rp. ' . number_format($p->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</td>
                         <td>{{ $p->created_at->format('d/m/Y') }}</td>
                         <td>
                             @php
