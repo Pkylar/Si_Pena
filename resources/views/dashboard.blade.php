@@ -52,13 +52,6 @@ setInterval(updateGreeting, 60000);
             <p>Pengajuan Ditolak</p>
         </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon accepted"><i class="fas fa-wallet"></i></div>
-        <div class="stat-info">
-            <h3>Rp. {{ number_format($stats['total_dana_acc'], 0, ',', '.') }}</h3>
-            <p>Total Dana ACC Kaur Keuangan</p>
-        </div>
-    </div>
 </div>
 
 <div class="card">
@@ -81,6 +74,7 @@ setInterval(updateGreeting, 60000);
                         <th>Diajukan Oleh</th>
                         <th>Nama Kegiatan</th>
                         <th>Dana Diajukan</th>
+                        <th>Dana ACC Kaur Keuangan</th>
                         <th>Tanggal Pengajuan</th>
                         <th>Status</th>
                         <th>Aksi</th>
@@ -92,6 +86,7 @@ setInterval(updateGreeting, 60000);
                         <td>{{ $p->user->name }}</td>
                         <td>{{ $p->nama_kegiatan }}</td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 2, ',', '.') }}</td>
+                        <td>{{ $p->dana_disetujui_keuangan ? 'Rp. ' . number_format($p->dana_disetujui_keuangan, 2, ',', '.') : '-' }}</td>
                         <td>{{ $p->created_at->format('d/m/Y') }}</td>
                         <td>
                             @php

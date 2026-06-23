@@ -25,7 +25,6 @@ class DashboardController extends Controller
             ])->count(),
             'diterima' => (clone $query)->whereIn('status', ['Disetujui', 'Selesai'])->count(),
             'ditolak' => (clone $query)->where('status', 'Ditolak')->count(),
-            'total_dana_acc' => (clone $query)->whereIn('status', ['Disetujui', 'Selesai'])->sum('dana_disetujui_keuangan'),
         ];
 
         $pengajuan = $query->with('user')->latest()->get();
