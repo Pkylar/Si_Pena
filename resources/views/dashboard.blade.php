@@ -74,7 +74,7 @@ setInterval(updateGreeting, 60000);
                         <th>Diajukan Oleh</th>
                         <th>Nama Kegiatan</th>
                         <th>Dana Diajukan</th>
-                        <th>Dana ACC Kaur Keuangan</th>
+                        <th>Dana yang Disetujui</th>
                         <th>Tanggal Pengajuan</th>
                         <th>Status</th>
                         <th>Aksi</th>
