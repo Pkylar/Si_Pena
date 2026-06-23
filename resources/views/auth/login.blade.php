@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="checkbox-group">
-                        <input type="checkbox" name="agree" id="agree">
+                        <input type="checkbox" name="agree" id="agree" required>
                         <label for="agree" style="margin:0;font-weight:normal;">Saya setuju dengan Syarat dan Kebijakan Privasi</label>
                     </div>
                     <button type="submit" class="btn-login">Login</button>

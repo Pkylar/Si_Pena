@@ -24,7 +24,7 @@
                 <thead>
                     <tr>
                         <th>Diajukan Oleh</th>
-                        <th>Proposal Pengajuan</th>
+                        <th>Nama Kegiatan</th>
                         <th>Dana yang Diajukan</th>
                         <th>Dana yang Disetujui</th>
                         <th>Tanggal Pengajuan</th>
@@ -36,11 +36,7 @@
                     @foreach($pengajuan as $p)
                     <tr>
                         <td>{{ $p->user->name }}</td>
-                        <td>
-                            <a href="{{ asset('storage/' . $p->proposal_file) }}" target="_blank" style="color:#5ba4cf;">
-                                <i class="fas fa-file-pdf" style="color:#e57373;"></i> Lihat PDF
-                            </a>
-                        </td>
+                        <td>{{ $p->nama_kegiatan }}</td>
                         <td>Rp. {{ number_format($p->dana_diajukan, 2, ',', '.') }}</td>
                         <td>{{ ($p->dana_disetujui_keuangan ?? $p->dana_disetujui) ? 'Rp. ' . number_format($p->dana_disetujui_keuangan ?? $p->dana_disetujui, 2, ',', '.') : '-' }}</td>
                         <td>{{ $p->created_at->format('d/m/Y') }}</td>
