@@ -183,14 +183,20 @@
     if (inputDana) {
         const sisaDana = parseFloat(inputDana.dataset.sisa) || 0;
         const warning = document.getElementById('warningDana');
+        const form = inputDana.closest('form');
+
         inputDana.addEventListener('input', function() {
             const value = parseInt(this.value.replace(/\./g, '')) || 0;
             if (value > sisaDana && sisaDana > 0) {
                 warning.style.display = 'block';
                 inputDana.style.borderColor = '#dc3545';
+                form.querySelector('button[type="submit"]').disabled = true;
+                form.querySelector('button[type="submit"]').style.opacity = '0.5';
             } else {
                 warning.style.display = 'none';
                 inputDana.style.borderColor = '#ddd';
+                form.querySelector('button[type="submit"]').disabled = false;
+                form.querySelector('button[type="submit"]').style.opacity = '1';
             }
         });
     }

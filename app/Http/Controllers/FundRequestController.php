@@ -204,7 +204,37 @@ class FundRequestController extends Controller
     {
         $request->merge(['dana_disetujui_keuangan' => str_replace('.', '', $request->dana_disetujui_keuangan)]);
         $request->validate(['dana_disetujui_keuangan' => 'required|numeric|min:0']);
-        $pengajuan = FundRequest::findOrFail($id);
+        $pengajuan = FundRequest::with('user')->findOrFail($id);
+
+        $kategori = $pengajuan->jenis_kegiatan === 'Lomba' ? 'lomba' : 'ormawa';
+        $orgName = $pengajuan->user->organization_name;
+        if ($kategori === 'lomba') {
+            $orgToUnit = ['HMTI' => 'TI', 'HMSI' => 'SI', 'HMTL' => 'TL', 'MTO' => 'MR'];
+            $unit = $orgToUnit[$orgName] ?? $orgName;
+        } else {
+            $unit = $orgName;
+        }
+
+        $triwulan = (int) ceil(date('m', strtotime($pengajuan->tanggal_mulai)) / 3);
+        $budget = \App\Models\FundBudget::where('kategori', $kategori)
+            ->where('nama_unit', $unit)
+            ->where('triwulan', $triwulan)
+            ->first();
+
+        if ($budget) {
+            $totalDisetujui = FundRequest::where('jenis_kegiatan', $pengajuan->jenis_kegiatan)
+                ->whereIn('status', ['Disetujui', 'Selesai'])
+                ->whereNotNull('dana_disetujui')
+                ->whereHas('user', fn($q) => $q->where('organization_name', $orgName))
+                ->sum('dana_disetujui');
+
+            $sisaDana = $budget->total_dana - $totalDisetujui;
+
+            if ($request->dana_disetujui_keuangan > $sisaDana) {
+                return back()->withErrors(['Dana yang disetujui melebihi sisa anggaran (Rp. ' . number_format($sisaDana, 0, ',', '.') . ').']);
+            }
+        }
+
         $pengajuan->update(['dana_disetujui_keuangan' => $request->dana_disetujui_keuangan]);
 
         return back()->with('success', 'Dana disetujui kaur keuangan berhasil disimpan.');
