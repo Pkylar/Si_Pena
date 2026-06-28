@@ -107,7 +107,7 @@ class FundRequestController extends Controller
         // Validasi: role hanya bisa ubah status jika pengajuan sudah di tahap mereka
         $requiredCurrentStatus = match ($user->role) {
             'kemahasiswaan' => ['Belum Diproses', 'Sedang Diproses Kemahasiswaan', 'Selesai Direvisi'],
-            'kaur_kemahasiswaan' => ['Diteruskan ke Kaur Kemahasiswaan'],
+            'kaur_kemahasiswaan' => ['Diteruskan ke Kaur Kemahasiswaan', 'Selesai Direvisi'],
             'keuangan' => ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan'],
             'kaur_keuangan' => ['Diteruskan ke Kaur Keuangan'],
             'wd2' => ['Menunggu Persetujuan WD2'],

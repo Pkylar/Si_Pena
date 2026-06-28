@@ -119,8 +119,8 @@
             @php
                 $role = auth()->user()->role;
                 $canChangeStatus = match($role) {
-                    'kemahasiswaan' => in_array($pengajuan->status, ['Belum Diproses', 'Sedang Diproses Kemahasiswaan']),
-                    'kaur_kemahasiswaan' => in_array($pengajuan->status, ['Diteruskan ke Kaur Kemahasiswaan']),
+                    'kemahasiswaan' => in_array($pengajuan->status, ['Belum Diproses', 'Sedang Diproses Kemahasiswaan', 'Selesai Direvisi']),
+                    'kaur_kemahasiswaan' => in_array($pengajuan->status, ['Diteruskan ke Kaur Kemahasiswaan', 'Selesai Direvisi']),
                     'keuangan' => in_array($pengajuan->status, ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan']),
                     'kaur_keuangan' => in_array($pengajuan->status, ['Diteruskan ke Kaur Keuangan']),
                     'wd2' => $pengajuan->status === 'Menunggu Persetujuan WD2',
