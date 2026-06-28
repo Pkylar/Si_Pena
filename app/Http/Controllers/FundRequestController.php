@@ -71,7 +71,34 @@ class FundRequestController extends Controller
             abort(403);
         }
 
-        return view('pengajuan.show', compact('pengajuan'));
+        $sisaDana = null;
+        if ($user->role === 'kaur_keuangan') {
+            $kategori = $pengajuan->jenis_kegiatan === 'Lomba' ? 'lomba' : 'ormawa';
+            $orgName = $pengajuan->user->organization_name;
+
+            if ($kategori === 'lomba') {
+                $orgToUnit = ['HMTI' => 'TI', 'HMSI' => 'SI', 'HMTL' => 'TL', 'MTO' => 'MR'];
+                $unit = $orgToUnit[$orgName] ?? $orgName;
+            } else {
+                $unit = $orgName;
+            }
+
+            $triwulan = (int) ceil(date('m', strtotime($pengajuan->tanggal_mulai)) / 3);
+            $budget = \App\Models\FundBudget::where('kategori', $kategori)
+                ->where('nama_unit', $unit)
+                ->where('triwulan', $triwulan)
+                ->first();
+
+            $totalDisetujui = FundRequest::where('jenis_kegiatan', $pengajuan->jenis_kegiatan)
+                ->whereIn('status', ['Disetujui', 'Selesai'])
+                ->whereNotNull('dana_disetujui')
+                ->whereHas('user', fn($q) => $q->where('organization_name', $orgName))
+                ->sum('dana_disetujui');
+
+            $sisaDana = $budget ? $budget->total_dana - $totalDisetujui : null;
+        }
+
+        return view('pengajuan.show', compact('pengajuan', 'sisaDana'));
     }
 
     public function addRevision(Request $request, $id)

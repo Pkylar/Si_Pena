@@ -85,12 +85,18 @@
 
 
             @if(auth()->user()->role === 'kaur_keuangan')
+                @if($sisaDana !== null)
+                    <div style="padding:10px 20px;margin-bottom:10px;background:#e8f5e9;border-radius:6px;">
+                        <p style="font-size:13px;color:#155724;margin:0;"><i class="fas fa-info-circle"></i> Sisa dana tersedia untuk unit ini: <strong>Rp. {{ number_format($sisaDana, 0, ',', '.') }}</strong></p>
+                    </div>
+                @endif
                 <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/approved-fund-keuangan" style="padding:10px 20px;">
                     @csrf
                     @method('PATCH')
                     <div class="form-group">
                         <label>Dana Disetujui Kaur Keuangan (Rp)</label>
-                        <input type="text" name="dana_disetujui_keuangan" class="form-control input-rupiah" value="{{ $pengajuan->dana_disetujui_keuangan ? number_format($pengajuan->dana_disetujui_keuangan, 0, ',', '.') : '' }}" required>
+                        <input type="text" name="dana_disetujui_keuangan" id="inputDanaKeuangan" class="form-control input-rupiah" value="{{ $pengajuan->dana_disetujui_keuangan ? number_format($pengajuan->dana_disetujui_keuangan, 0, ',', '.') : '' }}" required data-sisa="{{ $sisaDana }}">
+                        <small id="warningDana" style="display:none;color:#dc3545;font-size:12px;margin-top:5px;"><i class="fas fa-exclamation-triangle"></i> Dana melebihi sisa anggaran yang tersedia!</small>
                     </div>
                     <button type="submit" class="btn btn-success btn-sm">Simpan Dana</button>
                 </form>
@@ -170,4 +176,24 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    const inputDana = document.getElementById('inputDanaKeuangan');
+    if (inputDana) {
+        const sisaDana = parseFloat(inputDana.dataset.sisa) || 0;
+        const warning = document.getElementById('warningDana');
+        inputDana.addEventListener('input', function() {
+            const value = parseInt(this.value.replace(/\./g, '')) || 0;
+            if (value > sisaDana && sisaDana > 0) {
+                warning.style.display = 'block';
+                inputDana.style.borderColor = '#dc3545';
+            } else {
+                warning.style.display = 'none';
+                inputDana.style.borderColor = '#ddd';
+            }
+        });
+    }
+</script>
+@endpush
 @endsection
