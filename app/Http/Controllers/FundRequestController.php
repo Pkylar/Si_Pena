@@ -106,7 +106,7 @@ class FundRequestController extends Controller
 
         // Validasi: role hanya bisa ubah status jika pengajuan sudah di tahap mereka
         $requiredCurrentStatus = match ($user->role) {
-            'kemahasiswaan' => ['Belum Diproses', 'Sedang Diproses Kemahasiswaan'],
+            'kemahasiswaan' => ['Belum Diproses', 'Sedang Diproses Kemahasiswaan', 'Selesai Direvisi'],
             'kaur_kemahasiswaan' => ['Diteruskan ke Kaur Kemahasiswaan'],
             'keuangan' => ['Diteruskan ke Keuangan', 'Sedang Diproses Keuangan'],
             'kaur_keuangan' => ['Diteruskan ke Kaur Keuangan'],
@@ -143,6 +143,34 @@ class FundRequestController extends Controller
         $pengajuan->update(['dana_disetujui' => $request->dana_disetujui]);
 
         return back()->with('success', 'Dana disetujui berhasil diperbarui.');
+    }
+
+    public function resubmit(Request $request, $id)
+    {
+        $pengajuan = FundRequest::findOrFail($id);
+        $user = auth()->user();
+
+        if (!in_array($user->role, ['mahasiswa', 'ormawa']) || $pengajuan->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if ($pengajuan->status !== 'Revisi') {
+            return back()->withErrors(['Pengajuan tidak dalam status revisi.']);
+        }
+
+        $request->validate([
+            'proposal_file' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $file = $request->file('proposal_file');
+        $path = $file->store('proposals', 'public');
+
+        $pengajuan->update([
+            'proposal_file' => $path,
+            'status' => 'Selesai Direvisi',
+        ]);
+
+        return back()->with('success', 'Proposal berhasil disubmit ulang. Status diubah menjadi Selesai Direvisi.');
     }
 
     public function updateApprovedFundKeuangan(Request $request, $id)

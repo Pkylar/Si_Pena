@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengajuan', [FundRequestController::class, 'store'])
         ->middleware('role:mahasiswa,ormawa')->name('pengajuan.store');
     Route::get('/pengajuan/{id}', [FundRequestController::class, 'show'])->name('pengajuan.show');
+    Route::post('/pengajuan/{id}/resubmit', [FundRequestController::class, 'resubmit'])
+        ->middleware('role:mahasiswa,ormawa')->name('pengajuan.resubmit');
     Route::post('/pengajuan/{id}/revision', [FundRequestController::class, 'addRevision'])
         ->middleware('role:kemahasiswaan,keuangan,kaur_kemahasiswaan,kaur_keuangan')->name('pengajuan.revision');
     Route::patch('/pengajuan/{id}/status', [FundRequestController::class, 'updateStatus'])

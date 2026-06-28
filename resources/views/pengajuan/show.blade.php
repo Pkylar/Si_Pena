@@ -60,6 +60,19 @@
                     <button type="submit" class="btn btn-primary btn-sm">Kirim Revisi</button>
                 </form>
             @endif
+
+            @if(in_array(auth()->user()->role, ['mahasiswa', 'ormawa']) && $pengajuan->status === 'Revisi')
+                <form method="POST" action="/pengajuan/{{ $pengajuan->id }}/resubmit" enctype="multipart/form-data" style="padding:10px 20px;background:#fff8e1;border-radius:6px;margin-top:10px;">
+                    @csrf
+                    <p style="font-size:13px;color:#856404;margin-bottom:12px;"><i class="fas fa-exclamation-triangle"></i> Pengajuan Anda perlu direvisi. Silakan upload ulang proposal yang sudah diperbaiki.</p>
+                    <div class="form-group">
+                        <label>Upload Ulang Proposal (PDF) <span class="required">*</span></label>
+                        <input type="file" name="proposal_file" class="form-control" accept=".pdf" required>
+                        <small class="field-hint">Format: PDF, maksimal 10MB</small>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-sm">Submit Ulang & Selesai Direvisi</button>
+                </form>
+            @endif
         </div>
 
         <div class="detail-section">
